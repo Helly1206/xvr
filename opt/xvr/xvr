@@ -1,0 +1,8 @@
+#!/usr/bin/python3
+
+from main.xvr import xvr
+from sys import argv
+
+result = 1
+while result != 0:
+    result = xvr().run(argv[1:])

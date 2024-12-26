@@ -1,0 +1,17 @@
+#!/bin/bash
+NAME="xvr"
+ETCDIR="/etc"
+OPTDIR="/opt"
+OPTLOC="$OPTDIR/$NAME"
+SERVICEDIR="$ETCDIR/systemd/system"
+SERVICESCRIPT="$NAME.service"
+
+py3clean "$OPTLOC"
+
+echo "Install automatic startup service for $NAME"
+if [ -f "$SERVICEDIR/$SERVICESCRIPT" ]; then
+    systemctl enable $SERVICESCRIPT
+    systemctl start $SERVICESCRIPT
+fi
+
+exit 0

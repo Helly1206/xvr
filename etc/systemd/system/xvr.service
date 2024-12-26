@@ -1,0 +1,13 @@
+# XVR - Simple but eXtended Network Video Recorder
+
+[Unit]
+Description=xvr
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/opt/xvr/xvr
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target

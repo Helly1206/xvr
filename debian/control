@@ -1,0 +1,20 @@
+Source: xvr
+Section: net
+Priority: optional
+Maintainer: Helly1206
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.6
+XB-Plugin-Section: sharing
+
+Package: xvr
+Architecture: all
+Depends: ffmpeg,
+         python3,
+         python3-paho-mqtt,
+         python3-yaml,
+         python3-httpx,
+         python3-ciso8601,
+         python3-urllib3,
+         python3-psutil,
+         ${misc:Depends}
+Description: xvr (Simple but extended Network Video Recorder)

@@ -1,0 +1,10 @@
+#!/usr/bin/python3
+
+# xvr file for docker only to set correct locations
+
+from main.xvr import xvr
+from sys import argv
+
+result = 1
+while result != 0:
+    result = xvr(docker = True).run(argv[1:])

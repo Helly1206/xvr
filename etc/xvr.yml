@@ -1,0 +1,136 @@
+# xvr settings file
+#
+#general:                 # general settings
+#  logging:               # critical, error, info or debug, default = info
+#  videofolder:           # folder to store videos, default = /cameras (cannot change on docker)
+#  timelineformat:        # json or csv, default = json
+#
+#restapi:                 # restapi settings
+#  enable:                # true enables restapi
+#  port:                  # restapi port, default 8081 (cannot change on docker)
+#  username:              # restapi username, no username if not entered or empty
+#  password:              # restapi password, no password if not entered or empty. Username is required for password.
+#
+#mqtt:                    # mqtt settings
+#  enable:                # true enables mqtt
+#  broker:                # mqtt broker ip-address or url
+#  port:                  # mqtt port, default = 1883
+#  username:              # mqtt username, no username if not entered or empty
+#  password:              # mqtt password, no password if not entered or empty. Username is required for password.
+#  maintopic:             # mqtt main topic for all cameras, default = xvr
+#  hatopic:               # home assistaant auto discovery topic. No discovery if empty or not entered, default = homeassistant
+#  qos:                   # quality of service, default = 0
+#  retain:                # retain published messages, default = true
+
+#cameras:                 # settings for cameras
+#  camera1:               # the name of the first camera (used for detection of device hardware and in restapi and mqtt topic)
+#    friendlyname:        # friendly name for camera, e.g."Livingroom Camera"
+#    alias:               # aliases (names) for commands and status (if not entered defaults are used)
+#      cmd_suffix:        # suffix for commands over mqtt. default empty
+#      st_suffix:         # suffix for status over mqtt. default status
+#      enable:            # enable input, rename if required
+#      record:            # record input, rename if required
+#      recording:         # recording output, rename if required
+#      detected:          # detected output, rename if required
+#    host:                # hostname or ip-address of camera
+#    username:            # username to login to camera
+#    password:            # password for camera
+#    rtsprecord:          # record video via rtsp, default = true
+#    rtspport:            # rtsp port, default = 554
+#    rtspstream:          # rtsp stream (added to url), default = stream1
+#    onvifdetect:         # use onvif to detect motion, default = true
+#    onvifport:           # onvif port, default = 2020
+#    onviftype: []        # detection type array, choose from: [motion, person, pet, vehicle]
+#    detectpost:          # number of seconds to extend tetection (for debouncing), default = 5
+#    extrecord:           # use external record input, default = false
+#    extenable:           # use external enable input, default = true
+#    continuerec:         # record 24/7, default = false
+#    vcodec:              # video codec, choose from: none, copy, <codec>, default = copy
+#    acodec:              # audio codec, choose from: none, copy, <codec>, default = aac
+#    maxfilesize:         # number of seconds filesize to start new file, defualt = 3600
+#    recordpost:          # number of seconds to record if motion finished, default = 20
+#    keepdays:            # number of days to keep recordings, 0 = keep always, default = 28
+#    maxsizemb:           # maximum size of video folder in MB, 0 = no limit, default = 0 
+#    timeline:            # write detections in timeline, default = true
+
+general:
+  logging: info
+  videofolder: /cameras
+  timelineformat: json
+
+restapi:
+  enable: true
+  port: 8081
+  username: 
+  password: 
+
+mqtt:
+  enable: true
+  broker: <brokeraddress>
+  port: 1883
+  username: 
+  password: 
+  maintopic: xvr
+  hatopic: homeassistant
+  qos: 0
+  retain: true
+
+cameras:
+  camera1:
+    friendlyname: "Camera name"
+    alias:
+      cmd_suffix: 
+      st_suffix: status
+      enable: 
+      record: 
+      recording:
+      detected:
+      detection:
+    host: 192.168.x.y
+    username: xxx
+    password: xxx
+    rtsprecord: true
+    rtspport: 554
+    rtspstream: stream1
+    onvifdetect: true
+    onvifport: 2020
+    onviftype: [motion, person]
+    detectpost: 5
+    extrecord: true
+    extenable: true
+    continuerec: false
+    acodec: aac
+    maxfilesize: 3600
+    recordpost: 20
+    keepdays: 28
+    maxsizemb: 0
+    timeline: true
+#  camera2:
+#    friendlyname: "Camera2 name"
+#    alias:
+#      cmd_suffix: 
+#      st_suffix: status
+#      enable: 
+#      record: 
+#      recording:
+#      detected:
+#      detection:
+#    host: 192.168.x.y
+#    username: xxx
+#    password: xxx
+#    rtsprecord: true
+#    rtspport: 554
+#    rtspstream: stream1
+#    onvifdetect: true
+#    onvifport: 2020
+#    onviftype: [motion]
+#    detectpost: 20
+#    extrecord: false
+#    extenable: true
+#    continuerec: false
+#    acodec: aac
+#    maxfilesize: 3600
+#    recordpost: 20
+#    keepdays: 28
+#    maxsizemb: 0
+#    timeline: true

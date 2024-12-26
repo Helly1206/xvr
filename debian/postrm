@@ -1,0 +1,17 @@
+#!/bin/bash
+NAME="xvr"
+ETCDIR="/etc"
+OPTDIR="/opt"
+OPTLOC="$OPTDIR/$NAME"
+SERVICEDIR="$ETCDIR/systemd/system"
+SERVICESCRIPT="$NAME.service"
+
+if [ -f "$SERVICEDIR/$SERVICESCRIPT" ]; then
+    echo "Uninstalling service $NAME"
+    systemctl stop "$SERVICESCRIPT"
+    systemctl disable "$SERVICESCRIPT"
+fi
+
+py3clean "$OPTLOC"
+
+exit 0
