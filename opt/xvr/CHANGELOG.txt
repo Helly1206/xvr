@@ -1,2 +1,6 @@
+[B]0.8.1[/B]
+- Catch exception on httpx connection error.
+- Added onlnie sensor to retain current state after restarting.
+
 [B]0.8.0[/B]
 - Initial release.

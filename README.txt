@@ -1,4 +1,4 @@
-XVR - v0.8.0
+XVR - v0.8.1
 
 XVR - Simple but eXtended Network Video Recorder
 === = ====== === ======== ======= ===== ========
@@ -68,6 +68,7 @@ Available tags:
 --------- -----
 general: (use general as camera)
 restart: (command) restart the xvr application
+online: (status) boolean - high when xvr is online and running
 
 Per camera:
 recording: (status) boolean - high when the camera stream is being recorded
@@ -196,6 +197,114 @@ In /etc/xvr.yml, the configuration file is found. (/data/config/xvr.yml for dock
 #    timeline:            # write detections in timeline, default = true
 
 After changing the yaml configuration, the service needs to be restarted.
+
+Home assistant examples:
+---- --------- ---------
+
+Automation to switch on or off enable of a camera (e.g. disable recording when someone is home)
+
+- id: '<enter your id here>'
+  alias: Record Livingroom camera
+  description: ''
+  mode: single
+  triggers:
+    - trigger: state
+      entity_id:
+        - binary_sensor.record_camera #<sensor to e.g. detect someone is home>
+      from: "off"
+      to: "on"
+      id: record_on
+    - trigger: state
+      entity_id:
+        - binary_sensor.record_camera #<sensor to e.g. detect someone is home>
+      from: "on"
+      to: "off"
+      id: record_off
+    - trigger: state
+      entity_id:
+        - binary_sensor.general_online
+      to: "on"
+      id: online
+  conditions: []
+  actions:
+    - if:
+        - condition: or
+          conditions:
+            - condition: trigger
+              id:
+                - record_on
+            - condition: and
+              conditions:
+                - condition: trigger
+                  id:
+                    - online
+                - condition: state
+                  entity_id: binary_sensor.record_camera #<sensor to e.g. detect someone is home>
+                  state: "on"
+      then:
+        - action: switch.turn_on
+          metadata: {}
+          data: {}
+          target:
+            entity_id: switch.livingroom_enable #camera is called livingroom
+      else:
+        - action: switch.turn_off
+          metadata: {}
+          data: {}
+          target:
+            entity_id: switch.livingroom_enable #camera is called livingroom
+
+Example of adding video folder to media folder in home assistant:
+
+Take care that video folder can be accessed in home assistant. e.g. in docker (core) add as volume:
+      - /<path to videos>/cameras:/cameras
+
+add in configuration.yaml:
+homeassistant:
+  allowlist_external_dirs:
+    - /cameras
+  media_dirs:
+    media: /media
+    camera: /cameras
+
+Example of dashboard containing generic gamera for live view:
+
+views:
+  - title: Home
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Livingroom Camera
+            heading_style: title
+            icon: mdi:webcam
+          - show_state: false
+            show_name: false
+            camera_view: live
+            type: picture-entity
+            entity: camera.livingroomcamera
+          - type: history-graph
+            show_names: false
+            entities:
+              - entity: binary_sensor.livingroom_detected
+            hours_to_show: 48
+            logarithmic_scale: false
+          - type: history-graph
+            show_names: false
+            entities:
+              - entity: sensor.livingroom_detection
+            hours_to_show: 48
+            logarithmic_scale: false
+          - show_name: false
+            show_icon: true
+            type: button
+            icon: mdi:webcam
+            tap_action:
+              haptic: heavy
+              action: navigate
+              navigation_path: >-
+                /media-browser/browser/app%2Cmedia-source%3A%2F%2Fmedia_source/%2Cmedia-source%3A%2F%2Fmedia_source%2Fcamera%2Flivingroom
+        column_span: 1
 
 That's all for now ...
 

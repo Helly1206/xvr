@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any
 from collections.abc import Callable
 
 import httpx
-from httpx import TransportError
+from httpx import TransportError, ConnectError
 from zeep.exceptions import Fault, XMLParseError, XMLSyntaxError
 from zeep.loader import parse_xml
 from zeep.wsdl.bindings.soap import SoapOperation
@@ -190,6 +190,8 @@ class BaseManager:
             renewal_call_at = (
                 await self._renew_subscription() or await self._restart_subscription()
             )
+        except ConnectError as e:
+            logger.debug("Connection error")
         finally:
             self._schedule_subscription_renew(
                 renewal_call_at

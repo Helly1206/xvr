@@ -29,7 +29,7 @@ from process.topics.topics import topics
 ####################### GLOBALS #########################
 
 APP_NAME = "xvr"
-VERSION = "0.8.0"
+VERSION = "0.8.1"
 YML_FILENAME = "xvr.yml" #"/etc/xvr.yml"
 LOG_FILENAME = "xvr.log"
 DOCKER_BASE = "/data"
@@ -98,6 +98,7 @@ class xvr(object):
         devices.append("general")
         self.restapi=restapi(self, APP_NAME, common.getsetting(self.settings, "restapi"), devices)
         self.restapi.start()
+        self.getcb("general", "online", True)
         self.mqtt=mqtt(self, APP_NAME, common.getsetting(self.settings, "mqtt"))
         retry = self.mqtt.connect()
         retry = self.addTopics(retry)
@@ -106,6 +107,8 @@ class xvr(object):
             sleep(1)
             retry = self.mqtt.connect(retry) # reconnect if connection failed the first time
             retry = self.addTopics(retry)
+
+        self.getcb("general", "online", False)
 
         for camname in self.cameras.keys():
             if self.cameras[camname]:
@@ -121,12 +124,14 @@ class xvr(object):
         self.logger.handlers.clear()
         return self.exitval
         
-    def getcb(self, camname, key, value, interface):
+    def getcb(self, camname, key, value, interface = 0):
         self.logger.debug("<" + camname + ": " + key + " = " + str(value))
         if interface != self.MQTT:
-            self.restapi.setValue(camname, key, value)
+            if self.restapi != None:
+                self.restapi.setValue(camname, key, value)
         if interface != self.RESTAPI:
-            self.mqtt.setValue(camname, key, value)
+            if self.mqtt != None:
+                self.mqtt.setValue(camname, key, value)
 
     def requestStatus(self, interface): #use interface to send data to correct interface
         for camname in self.cameras.keys():
@@ -137,7 +142,12 @@ class xvr(object):
             retry -= 1
             for camname in self.cameras.keys():
                 self.mqtt.add(camname, self.cameras[camname].getTopics())
-            self.mqtt.add("general", topics("general", "1").getTopics())
+            self.mqtt.add("general", topics("general", "1", {"st_suffix": ""}).getTopics())
+            self.getcb("general", "online", False)
+        elif retry > -5:
+            retry -= 1
+            if retry == -5:
+                self.getcb("general", "online", True)
         return retry
     
     def loadModel(self, camname):
