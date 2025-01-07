@@ -1,4 +1,4 @@
-xvr (0.80) stable; urgency=low
+xvr (0.81) stable; urgency=low
 
   * Catch exception on httpx connection error.
   * Added onlnie sensor to retain current state after restarting.
