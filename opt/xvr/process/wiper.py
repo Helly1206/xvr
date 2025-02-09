@@ -15,7 +15,6 @@ from common.common import common
 #########################################################
 
 ####################### GLOBALS #########################
-SECONDSADAY    = 86400 # seconds in a day
 VIDEOEXTENSION = ".mp4"
 MB2B           = 1024*1024
 #########################################################
@@ -53,14 +52,14 @@ class wiper(object):
     def wipeFilesTime(self, days):
         try:
             list_of_files = os.listdir(self.path) 
-            current_time = datetime.now().timestamp()
+            current_time = datetime.now()
 
             for file in list_of_files: 
                 file_location = os.path.join(self.path, file)
                 ext = os.path.splitext(file_location)[1]
                 if ext == VIDEOEXTENSION:
-                    file_time = os.stat(file_location).st_mtime 
-                    if(file_time < current_time - SECONDSADAY*days): 
+                    file_time = datetime.fromtimestamp(os.stat(file_location).st_mtime)
+                    if (current_time - file_time).days > days:
                         os.remove(file_location)
                         self.logger.debug(f"Cleanup video files: deleted {file_location}")
         except:
@@ -69,7 +68,6 @@ class wiper(object):
     def wipeFilesSize(self, fsize):
         try:
             list_of_files = os.listdir(self.path) 
-            current_time = datetime.now().timestamp()
             maxsize = fsize * MB2B
             files = []
             totalsize = 0

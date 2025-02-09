@@ -1,4 +1,4 @@
-XVR - v0.8.1
+XVR - v0.8.2
 
 XVR - Simple but eXtended Network Video Recorder
 === = ====== === ======== ======= ===== ========
@@ -222,8 +222,7 @@ Automation to switch on or off enable of a camera (e.g. disable recording when s
       id: record_off
     - trigger: state
       entity_id:
-        - binary_sensor.general_online
-      to: "on"
+        - event.general_online
       id: online
   conditions: []
   actions:

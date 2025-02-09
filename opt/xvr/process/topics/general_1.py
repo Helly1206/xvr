@@ -25,8 +25,8 @@ class topicData:
     name = "general"
     pub = ["restart"]
     sub = ["restart", "online"]
-    topics = [{"cmd_t": "restart", "stat_t": "",       "type": "button",        "dev_cla": "restart"},
-              {"cmd_t": "",        "stat_t": "online", "type": "binary_sensor", "dev_cla": ""}]
+    topics = [{"cmd_t": "restart", "stat_t": "",       "type": "button", "dev_cla": "restart"},
+              {"cmd_t": "",        "stat_t": "online", "type": "event",  "dev_cla": ""}]
     
 ######################### MAIN ##########################
 if __name__ == "__main__":

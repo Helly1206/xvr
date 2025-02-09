@@ -29,7 +29,7 @@ from process.topics.topics import topics
 ####################### GLOBALS #########################
 
 APP_NAME = "xvr"
-VERSION = "0.8.1"
+VERSION = "0.8.2"
 YML_FILENAME = "xvr.yml" #"/etc/xvr.yml"
 LOG_FILENAME = "xvr.log"
 DOCKER_BASE = "/data"
@@ -98,17 +98,15 @@ class xvr(object):
         devices.append("general")
         self.restapi=restapi(self, APP_NAME, common.getsetting(self.settings, "restapi"), devices)
         self.restapi.start()
-        self.getcb("general", "online", True)
         self.mqtt=mqtt(self, APP_NAME, common.getsetting(self.settings, "mqtt"))
         retry = self.mqtt.connect()
         retry = self.addTopics(retry)
+        self.onlineEvent()
 
         while not self.term.is_set():
             sleep(1)
             retry = self.mqtt.connect(retry) # reconnect if connection failed the first time
             retry = self.addTopics(retry)
-
-        self.getcb("general", "online", False)
 
         for camname in self.cameras.keys():
             if self.cameras[camname]:
@@ -124,14 +122,14 @@ class xvr(object):
         self.logger.handlers.clear()
         return self.exitval
         
-    def getcb(self, camname, key, value, interface = 0):
+    def getcb(self, camname, key, value, interface = 0, evt = False):
         self.logger.debug("<" + camname + ": " + key + " = " + str(value))
         if interface != self.MQTT:
             if self.restapi != None:
                 self.restapi.setValue(camname, key, value)
         if interface != self.RESTAPI:
             if self.mqtt != None:
-                self.mqtt.setValue(camname, key, value)
+                self.mqtt.setValue(camname, key, value, evt)
 
     def requestStatus(self, interface): #use interface to send data to correct interface
         for camname in self.cameras.keys():
@@ -143,11 +141,7 @@ class xvr(object):
             for camname in self.cameras.keys():
                 self.mqtt.add(camname, self.cameras[camname].getTopics())
             self.mqtt.add("general", topics("general", "1", {"st_suffix": ""}).getTopics())
-            self.getcb("general", "online", False)
-        elif retry > -5:
-            retry -= 1
-            if retry == -5:
-                self.getcb("general", "online", True)
+            self.onlineEvent()
         return retry
     
     def loadModel(self, camname):
@@ -155,6 +149,9 @@ class xvr(object):
             return "xvr"
         else:
             return repr(self.cameras[camname])
+        
+    def onlineEvent(self):
+        self.getcb("general", "online", '{"event_type": "1"}', self.ALL, True)
     
     def set(self, camname, key, value):
         retval = None

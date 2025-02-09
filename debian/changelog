@@ -1,3 +1,11 @@
+xvr (0.82) stable; urgency=low
+
+  * Publish online sensor when home asistant online for better synchronization.
+  * Changed online sensor to event as mqtt instead of binary sensor.
+  * fixed 1 day mismatch own wiping videos and json/ csv file.
+
+ -- Helly1206 <hellyrulez@hotmail.com>  Mon, 06 Feb 2025 19:45:21 +0100
+
 xvr (0.81) stable; urgency=low
 
   * Catch exception on httpx connection error.

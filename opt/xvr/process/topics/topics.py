@@ -14,9 +14,9 @@ from common.common import common
 # dict: {device: [{ cmd_t: "", stat_t: "", type: ..., class: ... }]}
 # types:
 # analog actuator: "number"
-# digital actuator: "switch"
+# digital actuator: "switch", "event"
 # analog sensor: "sensor"
-# digital sensor: "binary_sensor"
+# digital sensor: "binary_sensor", "button"
 
 ####################### GLOBALS #########################
 DEFAULT_STATUS = "_st"

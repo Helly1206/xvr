@@ -135,8 +135,11 @@ class mqtt(object):
                 self.client.publish(discotopic, disco, QOS, RETAIN)
                 self.logger.debug("MQTT: HA Discovery [" + discotopic + "]: " + disco) 
     
-    def setValue(self, devname, tag, value):
-        retain = common.getsetting(self.settings, "retain", RETAIN)
+    def setValue(self, devname, tag, value, evt = False):
+        if evt:
+            retain = False
+        else:
+            retain = common.getsetting(self.settings, "retain", RETAIN)
         maintopic = self.buildTopic(common.getsetting(self.settings, "maintopic", "iotusb"), devname)
         self.publish(self.buildTopic(maintopic, tag), common.convnumber(value), retain)
     
@@ -149,6 +152,7 @@ class mqtt(object):
             if message.payload.decode('utf-8') == HAONLINE:
                 self.logger.debug("MQTT: received HA online, issue HA Discovery")
                 self.loadDiscoTopics()
+                self.base.onlineEvent()
                 return
         self.base.set(self.getDevname(message.topic), self.getTag(message.topic), common.gettype(message.payload.decode('utf-8')))
 
@@ -171,6 +175,7 @@ class mqtt(object):
             self.loadSubTopics()
             self.loadDiscoTopics()
             self.base.requestStatus(self.base.MQTT)
+            self.base.onlineEvent()
 
     def _ondisconnect(self, client, userdata, rc):
         if rc == 0 or self.rcDisconnect != rc:
@@ -216,7 +221,9 @@ class mqtt(object):
         if topic["type"] == "binary_sensor" or topic["type"] == "switch":
             disco["pl_on"] = "1"
             disco["pl_off"] = "0"
-        if topic["type"] == "button":
+        elif topic["type"] == "event":
+            disco["event_types"] = ["1", "0"]
+        elif topic["type"] == "button":
             disco["pl_prs"] = "1"
         if topic["dev_cla"]:
             disco["dev_cla"] = topic["dev_cla"]
